@@ -1,0 +1,64 @@
+
+.atags input[type="text"], .atags input[type="text"]:focus {
+    box-shadow: none;
+    display: inline;
+    margin: 0;
+    outline: 0 none;
+    padding: 4px 6px;
+}
+.tag {
+    background-color: #91b8d0;
+    color: #fff;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: normal;
+    margin-bottom: 3px;
+    margin-right: 3px;
+    padding: 4px 22px 5px 9px;
+    position: relative;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease 0s;
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+.tag .close {
+    bottom: 0;
+    color: #fff;
+    float: none;
+    font-size: 12px;
+    line-height: 20px;
+    opacity: 1;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    text-shadow: none;
+    top: 0;
+    width: 18px;
+}
+.tag .close:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+.close {
+    color: #000;
+    float: right;
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 1;
+    opacity: 0.2;
+    text-shadow: 0 1px 0 #fff;
+}
+.close:hover, .close:focus {
+    color: #000;
+    cursor: pointer;
+    opacity: 0.5;
+    text-decoration: none;
+}
+button.close {
+    background: transparent none repeat scroll 0 0;
+    border: 0 none;
+    cursor: pointer;
+    padding: 0;
+}
+.tag-warning {
+    background-color: #ffb752;
+}
