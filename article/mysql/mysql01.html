@@ -1,0 +1,250 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>soul - 灵魂  个人博客</title>
+    <meta name="keywords" content="soul,灵魂,个人博客"/>
+    <meta name="description" content="soul灵魂的个人博客"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://blog.hancq.top/static/favicon.ico" rel="shortcut icon"/>
+    <link href="https://blog.hancq.top/static/blog/css/base.css" rel="stylesheet">
+    <link href="https://blog.hancq.top/static/blog/css/index.css" rel="stylesheet">
+    <link href="https://blog.hancq.top/static/blog/css/m.css" rel="stylesheet">
+    <script src="https://blog.hancq.top/static/blog/js/jquery.min.js" type="text/javascript"></script>
+    <script src="https://blog.hancq.top/static/blog/js/jquery.easyfader.min.js"></script>
+    
+    <script src="https://blog.hancq.top/static/blog/js/nav.js"></script>
+    <script src="https://blog.hancq.top/static/blog/js/scrollReveal.js"></script>
+    <!--[if lt IE 9]>
+    <script src="https://blog.hancq.top/static/blog/js/modernizr.js"></script>
+    <![endif]-->
+        <link rel="stylesheet" href="https://blog.hancq.top/static/plugins/css/editormd.css" />
+        <script src="https://blog.hancq.top/static/plugins/lib/marked.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/prettify.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/raphael.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/underscore.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/sequence-diagram.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/flowchart.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/jquery.flowchart.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/editormd.min.js"></script>
+
+    <link rel="stylesheet" href="https://blog.hancq.top/static/blog/comment/style.css">
+    <link rel="stylesheet" href="https://blog.hancq.top/static/blog/comment/comment.css">
+    <script type="text/javascript" src="https://blog.hancq.top/static/blog/comment/jquery.flexText.js"></script>
+    
+</head>
+<body>
+<header>
+	<!--menu begin-->
+    <div class="menu">
+        <nav class="nav" id="topnav">
+            <h1 class="logo"><a href="/index">soulの博客</a></h1>
+        </nav>
+    </div>
+    <!--menu end-->
+</header>
+<article>
+
+    <div class="infosbox">
+        <div class="newsview">
+            <h3 class="news_title">mysql解压版安装及主从配置</h3>
+            <div class="bloginfo">
+                <ul>
+                    <li class="author">soul</li>
+                    <li class="lmname">mysql</li>
+                    <li class="timer">2019-06-19</li>
+                </ul>
+            </div>
+            <div class="news_about"><strong>说明:</strong><span>转载请注明出处</span></div>
+			<div class="news_con" id="showcontent">
+				<textarea style="display:none;">
+## mysql 解压版win安装
+
+2.  解压到指定文件夹
+    
+3.  创建data目录
+    
+4.  创建my.ini文件
+    
+    ```
+    [mysql]
+    default-character-set=utf8
+    
+    [mysqld]
+    port=3307 #端口号
+    basedir=E:\\software\\mysql-8.0.15 #解压目录
+    datadir=E:\\software\\mysql-8.0.15\\data #数据目录
+    max_connections=20
+    character-set-server=utf8
+    default-storage-engine=INNODB
+    ```
+    
+
+5.  将安装目录下的bin目录添加到环境变量
+    
+6.  在bin目录下执行mysqld --initialize-insecure --user=mysql
+    
+7.  执行mysqld install [serviceName] 将mysql添加到服务
+    
+8.  启动服务net start mysql，上一步执行无参数则为mysql，有参数则为参数名
+    
+9.  执行mysqladmin -u root -P 3306 password "123456"设置初始密码
+    
+10.  如果navicat连接不了则执行
+    
+    ```
+    alter user 'root'@'localhost' identified with mysql_native_password by "123456";
+    ```
+    
+
+11.  安装多个实例时需要将端口号，服务名，配置文件中的目录位置修改
+
+## 主从复制配置
+
+2.  配置主服务器
+    
+    1.  停止服务
+        
+    2.  修改配置文件
+        
+        ```bash
+        [mysqld] #log-bin和server-id的值都是可以改为其他值的
+        log-bin=mysql-bin
+        server-id=1
+        ```
+        
+
+4.  启动主服务器
+    
+5.  创建用于同步的用户并授权
+    
+    ```bash
+    create user 'bak'@'%' identified by "123456";
+     grant replication slave on *.* to 'bak'@'%';
+    ```
+    
+6.  查询二进制日志信息 `show master status;`
+    
+
+3.  配置从服务器
+    
+    1.  停止服务
+        
+    2.  修改配置文件
+        
+        ```bash
+        [mysqld]#从服务器上没必要配置log-bin，当然也可以配置log-bin选项，因为可以在从服务器上进行数据备份和灾难恢复，或者某一天让这个从服务器变成一个主服务器
+         server-id=2
+        ```
+        
+    3.  启动从服务器
+        
+    4.  配置同步信息
+        
+        ```bash
+        # 其中MASTER_LOG_FILE和MASTER_LOG_POS都是在主服务器查询得到的
+        CHANGE MASTER TO MASTER_HOST='localhost',MASTER_PORT=3306,MASTER_USER='bak',MASTER_PASSWORD='123456', MASTER_LOG_FILE='mysql-bin.000002',MASTER_LOG_POS=1312;
+        ```
+        
+    5.  启动主从同步 `start slave;`
+        
+    6.  查看主从状态 `show slave status \G`,其中Slave_IO_Running和Slave_SQL_Running为yes则为成功
+				</textarea>
+			</div>
+        </div>
+        <div class="share">
+            <p class="dasbox">
+                <a href="javascript:void(0)" onClick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏本站</a>
+            </p>
+            <div class="hide_box" onclick="dashangToggle()"></div>
+            <div class="shang_box">
+                <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()" title="关闭">关闭</a>
+                <div class="shang_tit">
+                    <p>感谢您的支持，我会继续努力的!</p>
+                </div>
+                <div class="shang_payimg">
+                    <img src="https://blog.hancq.top/static/blog/images/alipayimg.jpg" alt="扫码支持" title="扫一扫">
+                </div>
+                <div class="pay_explain">扫码打赏，你说多少就多少</div>
+                <div class="shang_payselect">
+                    <div class="pay_item checked" data-id="alipay">
+                        <span class="radiobox"></span>
+                        <span class="pay_logo">
+                            <img src="https://blog.hancq.top/static/blog/images/alipay.jpg" alt="支付宝">
+                        </span>
+                    </div>
+                    <div class="pay_item" data-id="weipay">
+                        <span class="radiobox"></span>
+                        <span class="pay_logo">
+                            <img src="https://blog.hancq.top/static/blog/images/wechat.jpg" alt="微信">
+                        </span>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $(function () {
+                        $(".pay_item").click(function () {
+                            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+                            var dataid = $(this).attr('data-id');
+                            $(".shang_payimg img").attr("src", "https://blog.hancq.top/static/blog/images/" + dataid + "img.jpg");
+                            $("#shang_pay_txt").text(dataid == "alipay" ? "支付宝" : "微信");
+                        });
+                        
+						editormd.markdownToHTML("showcontent", {
+							htmlDecode: "style,script,iframe", //可以过滤标签解码
+							emoji: true,
+							taskList:true,
+							tex: true,               // 默认不解析
+							flowChart:true,         // 默认不解析
+							sequenceDiagram:true  // 默认不解析
+						});
+                        
+                    });
+                    function dashangToggle() {
+                        $(".hide_box").fadeToggle();
+                        $(".shang_box").fadeToggle();
+                    }
+                </script>
+            </div>
+        </div>	
+        <div style="height: 15px;background-color: #f7f7f7;"></div>
+    </div>
+    <!--blogsbox end-->
+    <div class="sidebar">
+        <div class="uinfo">
+            <h2 class="hometitle">个人资料</h2>
+            <img class="avatar" src="https://blog.hancq.top/static/blog/images/avatar.jpg">
+            <span>soul</span>
+            <p>这里不重要，正文才重要</p>
+            <br>
+            <hr/>
+            <br>
+
+        </div>
+        <div class="guanzhu" id="float">
+            <h2 class="hometitle">联系博主</h2>
+            <ul>
+                <li class="email"><a href="javascript:;"><span>邮箱</span>han.cq@foxmail.com</a></li>
+            </ul>
+        </div>
+    </div>
+</article>
+<footer>
+	<script src="https://blog.hancq.top/static/js/jquery.min.js" ></script>
+    <script src="https://blog.hancq.top/static/js/bootstrap.min.js" ></script>
+
+    <!-- bootstrap-table 表格插件 -->
+    <script src="https://blog.hancq.top/static/ajax/libs/bootstrap-table/bootstrap-table.min.js" ></script>
+    <script src="https://blog.hancq.top/static/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js" ></script>
+    <script src="https://blog.hancq.top/static/ajax/libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.min.js" ></script>
+    <script src="https://blog.hancq.top/static/ajax/libs/bootstrap-table/extensions/toolbar/bootstrap-table-toolbar.min.js" ></script>
+    <!-- jquery-validate 表单验证插件 -->
+    <script src="https://blog.hancq.top/static/ajax/libs/validate/jquery.validate.min.js" ></script>
+    <script src="https://blog.hancq.top/static/ajax/libs/validate/messages_zh.min.js" ></script>
+    <!-- jquery-validate 表单树插件 -->
+    <script src="https://blog.hancq.top/static/ajax/libs/jqTreeGrid/jquery.treegrid.min.js" ></script>
+    <script src="https://blog.hancq.top/static/ajax/libs/jqTreeGrid/jquery.treegrid.extension.js" ></script>
+    <!--<script src="http://tajs.qq.com/stats?sId=62048022"></script>-->
+</footer>
+<a href="#" class="cd-top">Top</a>
+</body>
+</html>
