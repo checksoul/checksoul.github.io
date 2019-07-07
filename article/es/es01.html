@@ -1,0 +1,834 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>soul - 灵魂  个人博客</title>
+    <meta name="keywords" content="soul,灵魂,个人博客"/>
+    <meta name="description" content="soul灵魂的个人博客"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://blog.hancq.top/static/favicon.ico" rel="shortcut icon"/>
+    <link href="https://blog.hancq.top/static/blog/css/base.css" rel="stylesheet">
+    <link href="https://blog.hancq.top/static/blog/css/index.css" rel="stylesheet">
+    <link href="https://blog.hancq.top/static/blog/css/m.css" rel="stylesheet">
+    <script src="https://blog.hancq.top/static/blog/js/jquery.min.js" type="text/javascript"></script>
+    <script src="https://blog.hancq.top/static/blog/js/jquery.easyfader.min.js"></script>
+    
+    <script src="https://blog.hancq.top/static/blog/js/nav.js"></script>
+    <script src="https://blog.hancq.top/static/blog/js/scrollReveal.js"></script>
+    <!--[if lt IE 9]>
+    <script src="https://blog.hancq.top/static/blog/js/modernizr.js"></script>
+    <![endif]-->
+        <link rel="stylesheet" href="https://blog.hancq.top/static/plugins/css/editormd.css" />
+        <script src="https://blog.hancq.top/static/plugins/lib/marked.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/prettify.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/raphael.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/underscore.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/sequence-diagram.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/flowchart.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/lib/jquery.flowchart.min.js"></script>
+        <script src="https://blog.hancq.top/static/plugins/editormd.min.js"></script>
+
+    <link rel="stylesheet" href="https://blog.hancq.top/static/blog/comment/style.css">
+    <link rel="stylesheet" href="https://blog.hancq.top/static/blog/comment/comment.css">
+    <script type="text/javascript" src="https://blog.hancq.top/static/blog/comment/jquery.flexText.js"></script>
+    
+</head>
+<body>
+<header>
+	<!--menu begin-->
+    <div class="menu">
+        <nav class="nav" id="topnav">
+            <h1 class="logo"><a href="/index">soulの博客</a></h1>
+        </nav>
+    </div>
+    <!--menu end-->
+</header>
+<article>
+
+    <div class="infosbox">
+        <div class="newsview">
+            <h3 class="news_title">ElasticSearch简单配置和操作</h3>
+            <div class="bloginfo">
+                <ul>
+                    <li class="author">soul</li>
+                    <li class="lmname">ElasticSearch</li>
+                    <li class="timer">2019-07-07</li>
+                </ul>
+            </div>
+            <div class="news_about"><strong>说明:</strong><span>转载请注明出处</span></div>
+			<div class="news_con" id="showcontent">
+				<textarea style="display:none;">
+# elasticSearch
+
+### 介绍
+
+ElasticSearch 是一个基于Lucene构建的开源、分布式、提供完整RESTful接口的全文搜索引擎.
+
+### 安装
+
+2.  在官网下载安装包 [https://www.elastic.co/cn/](https://www.elastic.co/cn/)]([https://www.elastic.co/cn/](https://www.elastic.co/cn/))
+    
+3.  创建es用户并指定用户组
+    
+4.  更改es目录权限
+    
+5.  切换用户并执行bin目录下的elasticsearch启动
+    
+6.  修改配置文件
+    
+    ```yaml
+    network.host: 本机ip
+    http.port: 9200
+    node.name: node-1
+    cluster.initial_master_nodes: ["node-1"]
+    #跨域访问需配置
+    http.cors.enabled: true
+    http.cors.allow-origin: "*"
+    ```
+    
+7.  启动
+    
+
+6.启动es
+
+### 问题解决
+
+2.  can not run elasticsearch as root
+    
+    ```yaml
+    切换用户为非root，见安装中2，3项
+    ```
+    
+3.  max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
+    
+    ```bash
+    #切换到root用户，编辑/etc/security/limits.conf 添加 
+    *    soft    nofile    65536
+    *    hard    nofile    65536    
+    #然后重启或者重新登录
+    ```
+    
+4.  max number of threads [1024] for user is too low, increase to at least [2048]
+    
+    ```bash
+    #切换到root用户，编辑/etc/security/limits.conf 添加
+    *    soft    nproc  4096
+    
+    *    hard    nproc  4096
+    #然后重启或者重新登录
+    ```
+    
+5.  max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+    
+    ```bash
+    #切换到root用户，编辑/etc/sysctl.conf 添加 
+    vm.max_map_count=655360
+    #完成之后执行sysctl -p 使设置生效
+    ```
+    
+
+### 插件或工具安装
+
+centos下firewall防火墙开放端口
+
+`firewall-cmd --zone=public --add-port=port/tcp --permanent`
+
+重新加载防火墙
+
+`Firewalls-cmd --reload`
+
+2.  head插件
+    
+    ```
+    #使用git下载head插件
+    git clone https://github.com/mobz/elasticsearch-head.git
+    #安装node之后安装依赖
+    npm install -g grunt-cli
+    #进入插件下载目录，需要先安装cnpm
+    cnpm install
+    #修改配置文件
+    vim Gruntfile.js
+    ----------------------
+    connect:{
+      server:{
+          options:{
+              hostname: '*',
+              port: 9100,
+              base: '.',
+              keepalive: true
+          }
+      }
+    }
+    ----------------------
+    #修改_site/app.js,需要配置跨域访问
+    ----------------------
+    this.base_uri = this.config.base_uri || this.prefs.get("app-base_uri") || "http://ip.128:9200";
+    ----------------------
+    #启动head
+    cd /usr/elasticsearch-head/node_modules/grunt/bin
+    ./grunt server
+    #开放防火墙端口9100
+    ```
+    
+3.  kibana安装
+    
+    ```bash
+    #下载安装包，需要与es版本一致
+    wget https://artifacts.elastic.co/downloads/kibana/kibana-7.0.0-linux-x86_64.tar.gz
+    #解压
+    tar -zxvf kibana-7.0.0-linux-x86_64.tar.gz
+    #修改配置文件config/kibana.yml
+    vim config/kibana.yml
+    ------------------------
+    server.host: "ip"
+    elasticsearch.url: "http://ip:9200"
+    ------------------------
+    #开放防火墙端口5601
+    ```
+    
+4.  ik中文分词器
+    
+    ```
+    #下载源码或者下载编译好的版本
+    git clone https://github.com/medcl/elasticsearch-analysis-ik.git #源码，使用mvn打包
+    wget https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.0.0/elasticsearch-analysis-ik-7.0.0.zip #编译版本
+    #将文件解压到es下的plugins下
+    unzip elasticsearch-analysis-ik-7.0.0.zip -d /opt/es/plugins/ik
+    ```
+    
+
+### 倒排索引
+
+```
+利用分词器将文档内容进行分词处理，然后将每个分词进行建立索引
+会使用标准化规则将分词结果进行处理，以提高相关联文档搜索概率
+```
+
+![[https://upload-images.jianshu.io/upload_images/8329974-112713f31924eb2a.png](https://upload-images.jianshu.io/upload_images/8329974-112713f31924)![https//uploadimagesjianshuio/uploadimages/8329974112713f31924eb2apng](https://upload-images.jianshu.io/upload_images/8329974-112713f31924eb2a.png)
+
+### 分词器
+
+`从一串文本中切分出一个一个的词条，并对每个词条进行标准化`
+
+默认分词器：
+
+`standard`:默认的，转换小写，去除标点，中文单字切分
+
+`simple`:通过非字母分割，转为小写，会去掉数字类型字符
+
+`Whitespace`:尽去除空格
+
+`language`:特定语言的分词
+
+### 基本增删改查
+
+```bash
+#添加索引--加配置
+put /index 
+{
+    "settings":{
+        "index":{
+            "number_of_shards": 3,//分片数
+            "number_of_replicas": 0//备份数
+        }
+    }
+}
+#添加索引--不加配置
+put /index
+#查看分片配置
+get /index/_settings
+#查看所有索引的配置
+get /_all/_settings
+
+#添加文档--指定ID
+put /index/doc/id
+{
+    "field": "value",
+    ......
+}
+#添加文档--不指定ID
+post /index/doc{
+    "field": "value",
+    ......//可以有id字段，但和文档ID不同
+}
+#查询文档
+get /index/doc/id
+#查询文档过滤属性
+get /index/doc/id?_source=field1,field2
+
+#更新文档--覆盖之前的文档进行更新
+put /index/doc/id 
+{
+    "field": "value",
+    ......
+}
+#更新文档--直接更新
+post /index/doc/id/_update
+{
+    "field": "value",
+    ......
+}
+
+#删除文档
+delete /index/doc/id
+#删除索引
+delete /index
+```
+
+### 批量获取文档
+
+```bash
+#批量获取数据
+get /_mget
+{
+    "docs":[
+        {
+            "_index": "index",#索引,可以为其他索引
+            "_type": "doc",#文档
+            "_id": "id", #ID       
+            "_source": ["field","field"],#指定查询到的字段
+        },
+        ......
+    ]
+}
+
+#查询索引相同的文档
+get /index/doc/_mget
+{
+    "docs":[
+        {"_id": "id"},
+        {"_id": "id","_type": "doc"}
+    ]
+}
+
+#直接使用ID查询
+get /index/doc/_mget
+{
+    "ids":["1","2",......]
+}
+```
+
+### Bulk API 实现批量操作
+
+```bash
+#语法
+#action 为行为,取值为create、update、index(更新或添加)、delete
+#metadata 为操作数据，即_index、_type、_id
+{action:{metadata}} \n
+{requestBody} \n
+
+#批量添加数据
+post /index/doc/_bulk
+{"index":{"_id":"id"}}
+{"field":"value","field2":"value2",...}
+{"index":{"_id":"id"}}
+{"field":"value","field2":"value2",...}
+......
+
+#批量删除文档
+post /index/doc/_bulk
+{"delete":{"_index":"index","_type":"doc","_id":"id"}}#删除操作无请求体
+......
+
+#批量创建
+post /index/doc/_bulk
+{"create":{"_index":"index","_type":"doc","_id":"id"}}
+{"field":"value",......}
+......
+
+#批量更新
+post /index/doc/_bulk
+{"update":{"_index":"index","_type":"doc","_id":"id"}}
+{"field":"value",......}
+......
+```
+
+### 版本控制
+
+`elasticSearch内部采用使用乐观锁机制来实现版本控制`
+
+```bash
+#如果version和当前版本一致，则可以执行成功，否则失败
+put /index/doc/id?version=version
+
+#指定外部版本控制,需要版本号大于自身版本号才可执行
+put /index/doc/id?version=version&version_type=external
+```
+
+### mapping
+
+```bash
+#es自动创建index、type,以及文档与type对应的mapping
+#mapping：定义了文档中每个字段的数据类型，以及子弹如何分词等属性
+#包含类型
+text：会分词
+keyword：不会分词
+数字型：long、integer、short、byte、double、float
+日期：date
+布尔：boolean
+二进制：binary
+#mapping指定字段的数据类型，和一些其他属性
+store：false  //是否从_source中分离，默认为false，只能搜索，不能获取值
+index：true  //分词，不分词设置为false，字段将不会被索引
+analyzer：ik  //指定分词器
+boost：1.23  //字段级别的分数加权，默认值为1.0
+fields:{raw:{type:string,index:index}}：可以对一个字段的值提供多种索引模式
+ignore_above：100  //超过长度则不被索引
+search_analyzer: ik  //指定搜索时使用的分词器，默认与建立索引的分词器一致
+
+#手动创建mapping
+put /index
+{
+    "mappings":{
+        "doc":{
+            "dynamic":true, # 有三个值，true 表示有陌生字段自动映射，false 表示忽略，strict 表示报错
+            "date_detection":true, # 有两个值，true 表示自动识别日期格式，false表示不识别
+            "properties":{
+                "field":{"type":"text","analyzer":"ik"},
+                "field":{"type":"keyword","index":false}
+            }
+        }
+    }
+}
+#动态索引模板
+put /index
+{
+    "mappings":{
+        "doc":{
+            "dynamic_templates":{
+                "en":{
+                    "match":"*_en",# 表示字段名匹配此规则，则使用当前定义的mapping
+                    "match_mapping_type":"string",
+                    "mapping":{
+                        "type":"text",
+                        "analyzer":"english"
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### 基本查询
+
+```bash
+#使用_search加q参数进行查询，使用json格式指定字段和值,使用sort参数进行排序
+get /index/doc/_search?q=name:lisi&sort=age:desc
+
+#trem查询，匹配则会查询
+get /index/doc/_search
+{
+    "from":0,//开始位置
+    "size":2,//查询数量
+    "query":{
+        "term":{
+            "name":"lisi"
+        }
+    }
+}
+#trems查询，匹配一个则会查询到
+get /index/doc/_search
+{
+    "query":{
+        "terms":{
+            "name":["lisi","wangwu"]
+        }
+    }
+}
+#match查询，会进行分词，然后进行查询
+get /index/doc/_search
+{
+    "query":{
+        "match":{
+            "name":"lisi wangwu"
+        }
+        #"match_all":{} //查询所有文档
+     }
+}
+#mutil_match查询，可以指定多个字段进行查询
+get /index/doc/_search
+{
+    "query":{
+        "mutil_match":{
+            "name":"lisi wangwu"，
+            "field":"value"
+         }
+    }
+}
+#match_phrase查询，短语匹配查询，匹配相同的短语
+get /index/doc/_search
+{
+    "query":{
+        "match_phrase":{
+            "name":"lisi wangwu"，
+        }
+        #"match_phrase_perfix":{//前缀查询
+        #    "name":{
+        #        "query":"ab"//查询name的前缀为ab的结果
+        #    }
+        #}
+    }
+}
+#使用_source指定查询的字段
+get /index/doc/_search
+{
+    "query":{
+        "match":{
+            "name":"lisi"
+        }
+    },
+    #"_source":["field1","field2"]
+    "_source"{
+        "includes":"addr*",//可以使用通配符
+        "excludes":["name","age*"]
+    }
+}
+#排序
+get /index/doc/_search
+{
+     "query":{
+         "match":{
+             "name":"lisi"
+         }
+     },
+     "sort"{//指定排序的字段和排序的方式
+         "age":{
+             "order":"desc"
+         }
+     }
+}
+#范围查询
+get /index/doc/_search
+{
+     "query":{
+         "range":{
+             "age":{
+                 "from":20,//开始
+                 "to":25,//结束
+                 "include_lower":true,//是否包含下界
+                 "include_upper":false//是否包含上界
+             }
+         }
+     }
+}
+#通配符查询，? *  
+get /index/doc/_search
+{
+     "query":{
+         "wildcard":{
+             "name":"li?i*"
+         }
+     }
+}
+#模糊查询
+get /index/doc/_search
+{
+     "query":{
+         "fuzzy":{
+             "name":"lsi"//查询l?*si之类的匹配文档
+         }
+     }
+     "version":true,//是否显示版本号
+     #高亮显示
+     "highlight":{
+         "fields":{
+             "name":{}
+         }
+     }
+}
+#ik带有两个分词器，ik_max_word:最细粒度的分词，ik_smart:最粗粒度的分词，
+```
+
+### Filter查询
+
+```bash
+get /index/doc/_search
+{
+    "query":{
+        "bool":{
+            "filter":[//filter 过滤查询
+                {"term":{"name":"lisi"}}
+            ],
+            "should":[//should满足其中一个即可，mast必须满足，mast_not必须不满足
+                {"term":{"name":"lisi"}},
+                {"bool":{
+                    "mast"[{"term":{"name":"lisi"}}],
+                    "mast_not":[{"term":{"name":"ww"}}]
+                }}
+            ]
+        }
+    }
+}
+#范围查询
+get /index/doc/_search
+{
+    "query":{
+        #gt 大于，lt小于，gte大于等于，lte小鱼等于，exists存在值的
+        "filter":{
+            "range":{
+                "age":{
+                    "gt":30,
+                    "lt":40
+                }
+            },
+            "exists":{//非空查询
+                "field":"name"
+            }
+        }
+    }
+}
+```
+
+### 聚合查询
+
+```bash
+#聚合查询
+get /index/doc/_search
+{
+    "size":0,#只显示查询的值
+    "aggs":{
+        "field_of_sum":{ #自定义名称
+            "sum":{ # min / max / avg / 
+                "field":"field_name"
+            }
+        }
+    }
+}
+#分组查询，使用terms
+get /index/doc/_search
+{
+     "size":0,#只显示查询的值
+     "aggs":{
+         "field_of_group":{
+             "terms":{ # min / max / avg /
+                 "field":"field_name"
+             }
+         }
+     }
+}
+#根据查询结果分组
+get /index/doc/_search
+{
+    "query":{}, #查询
+    "aggs":{} #聚合，可嵌套其他聚合函数
+}
+```
+
+### 复合查询
+
+```bash
+#复合查询
+get /index/doc/_search
+{
+    "query":{
+        "bool":{
+            "must":{},
+            "must_not":{},
+            "should":{},
+            "filter":{
+                "bool":{}
+            }
+        }
+    }
+}
+#constant_score查询
+get /index/doc/_search
+{
+    "query":{
+        "constant_score":{
+            # 使用该查询则不计算分数
+        }
+    }
+}
+```
+
+### 分布式架构
+
+##### 特点
+
+2.  透明隐藏特性：使用提供的api操作，不用理会底层
+    
+3.  扩容机制：可以增加服务器数量
+    
+4.  自动均衡：自动根据节点数量平衡存储
+    
+5.  节点选举：主节点宕机之后重新选举主节点
+    
+6.  节点对等：请求任意节点都可处理数据
+    
+
+```bash
+#es健康状态监测
+get _cat/health
+```
+
+### 元数据
+
+```bash
+_index : 索引，名称必须小写，不能以_开头，不能有逗号
+_type : 文档类型，一个索引下只能有一个文档类型
+_id : 文档的唯一标识，生成方式为自定义，或自动生成
+_version : 版本号
+_source : 字段和字段值，添加的文档内容
+```
+
+### 脚本操作
+
+```bash
+#更新字段
+get /index/doc/id/_update
+{
+    "script":"ctx._source.field='value'"
+}
+#更新数组
+get /index/doc/id/_update
+{
+    "script":{
+        "source":"ctx._source.field.add(params.field_name)", #使用add添加、remove删除、indexOf获取下标、
+        "params":{
+            "field_name":"value"
+        }
+    }
+}
+#删除数组
+get /index/doc/id/_update
+{
+    #条件删除
+    "script":"ctx.op=ctx._source.age==params.age?'delete':'none'",
+    "params":{
+        "age":20
+    }
+}
+#upsert操作,存在则执行脚本，不存在则使用upsert初始化
+get /index/doc/id/_update
+{
+    "script":"ctx._source.age+=1",
+    "upsert":{
+        "name":"lisi",
+        "age":20
+    }
+}
+#post方式并发问题处理,retry_on_conflict用于指定更新失败的重试次数
+post /index/doc/id/_update?retry_on_conflict=3
+#写一致性操作 consistency,取值有三个one表示一个分片活跃就能操作，all表示所有分片活跃才能执行，quorum表示多数(半数及以上)分片活跃才能执行，默认为quorum
+put /index/doc/id?consistency=one
+```
+
+### COPY_TO
+
+```bash
+#copy_to将其他字段的值拷贝到另一个字段中，必须是文本类型的才行，然后查询的时候可以直接查询拷贝的字段即可
+put /index/doc/_mapping
+{
+    "properties":{
+        "field":{
+            "type":"text",
+            "copy_to":"cpt"
+        },
+        "field_1":{
+            "type":"text",
+            "copy_to":"cpt"
+        }
+    }
+}
+```
+				</textarea>
+			</div>
+        </div>
+        <div class="share">
+            <p class="dasbox">
+                <a href="javascript:void(0)" onClick="dashangToggle()" class="dashang" title="打赏，支持一下">打赏本站</a>
+            </p>
+            <div class="hide_box" onclick="dashangToggle()"></div>
+            <div class="shang_box">
+                <a class="shang_close" href="javascript:void(0)" onclick="dashangToggle()" title="关闭">关闭</a>
+                <div class="shang_tit">
+                    <p>感谢您的支持，我会继续努力的!</p>
+                </div>
+                <div class="shang_payimg">
+                    <img src="https://blog.hancq.top/static/blog/images/alipayimg.jpg" alt="扫码支持" title="扫一扫">
+                </div>
+                <div class="pay_explain">扫码打赏，你说多少就多少</div>
+                <div class="shang_payselect">
+                    <div class="pay_item checked" data-id="alipay">
+                        <span class="radiobox"></span>
+                        <span class="pay_logo">
+                            <img src="https://blog.hancq.top/static/blog/images/alipay.jpg" alt="支付宝">
+                        </span>
+                    </div>
+                    <div class="pay_item" data-id="weipay">
+                        <span class="radiobox"></span>
+                        <span class="pay_logo">
+                            <img src="https://blog.hancq.top/static/blog/images/wechat.jpg" alt="微信">
+                        </span>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $(function () {
+                        $(".pay_item").click(function () {
+                            $(this).addClass('checked').siblings('.pay_item').removeClass('checked');
+                            var dataid = $(this).attr('data-id');
+                            $(".shang_payimg img").attr("src", "https://blog.hancq.top/static/blog/images/" + dataid + "img.jpg");
+                            $("#shang_pay_txt").text(dataid == "alipay" ? "支付宝" : "微信");
+                        });
+                        
+						editormd.markdownToHTML("showcontent", {
+							htmlDecode: "style,script,iframe", //可以过滤标签解码
+							emoji: true,
+							taskList:true,
+							tex: true,               // 默认不解析
+							flowChart:true,         // 默认不解析
+							sequenceDiagram:true  // 默认不解析
+						});
+                        
+                    });
+                    function dashangToggle() {
+                        $(".hide_box").fadeToggle();
+                        $(".shang_box").fadeToggle();
+                    }
+                </script>
+            </div>
+        </div>	
+        <div style="height: 15px;background-color: #f7f7f7;"></div>
+    </div>
+    <!--blogsbox end-->
+    <div class="sidebar">
+        <div class="uinfo">
+            <h2 class="hometitle">个人资料</h2>
+            <img class="avatar" src="https://blog.hancq.top/static/blog/images/avatar.jpg">
+            <span>soul</span>
+            <p>这里不重要，正文才重要</p>
+            <br>
+            <hr/>
+            <br>
+
+        </div>
+        <div class="guanzhu" id="float">
+            <h2 class="hometitle">联系博主</h2>
+            <ul>
+                <li class="email"><a href="javascript:;"><span>邮箱</span>han.cq@foxmail.com</a></li>
+            </ul>
+        </div>
+    </div>
+</article>
+<footer>
+	<script src="https://blog.hancq.top/static/js/jquery.min.js" ></script>
+    <script src="https://blog.hancq.top/static/js/bootstrap.min.js" ></script>
+
+    <!-- bootstrap-table 表格插件 -->
+    <script src="https://blog.hancq.top/static/ajax/libs/bootstrap-table/bootstrap-table.min.js" ></script>
+    <script src="https://blog.hancq.top/static/ajax/libs/bootstrap-table/locale/bootstrap-table-zh-CN.min.js" ></script>
+    <script src="https://blog.hancq.top/static/ajax/libs/bootstrap-table/extensions/mobile/bootstrap-table-mobile.min.js" ></script>
+    <script src="https://blog.hancq.top/static/ajax/libs/bootstrap-table/extensions/toolbar/bootstrap-table-toolbar.min.js" ></script>
+    <!-- jquery-validate 表单验证插件 -->
+    <script src="https://blog.hancq.top/static/ajax/libs/validate/jquery.validate.min.js" ></script>
+    <script src="https://blog.hancq.top/static/ajax/libs/validate/messages_zh.min.js" ></script>
+    <!-- jquery-validate 表单树插件 -->
+    <script src="https://blog.hancq.top/static/ajax/libs/jqTreeGrid/jquery.treegrid.min.js" ></script>
+    <script src="https://blog.hancq.top/static/ajax/libs/jqTreeGrid/jquery.treegrid.extension.js" ></script>
+    <!--<script src="http://tajs.qq.com/stats?sId=62048022"></script>-->
+</footer>
+<a href="#" class="cd-top">Top</a>
+</body>
+</html>
